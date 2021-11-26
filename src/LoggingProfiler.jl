@@ -1,5 +1,8 @@
 module LoggingProfiler
+using IRTools, DataStructures, Colors
+include("logging.jl")
+include("overdubbing.jl")
+include("visualization.jl")
 
-# Write your package code here.
-
+export @record
 end
