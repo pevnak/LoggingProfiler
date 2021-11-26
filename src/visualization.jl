@@ -67,13 +67,15 @@ function tape2structure(calls::Events)
             node = pop!(stack)
         end
     end
-    root
+    root[:children]
 end
+tape2structure() = tape2structure(to);
 
-function _visualize(filename::String, root; basetime= root[:children][1][:start], scaling = 1)
+_visualize(filename;scaling = 1) = _visualize(filename, tape2structure(); scaling)
+function _visualize(filename::String, events; basetime= events[1][:start], scaling = 1)
     open(filename, "w") do fio
         header(fio) 
-        _visualize(fio, root[:children], Dict(); basetime, scaling)
+        _visualize(fio, events, Dict(); basetime, scaling)
         footer(fio) 
     end
 end

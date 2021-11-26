@@ -7,7 +7,7 @@ using Test
 	  z + sin(y)
 	end
 
-	LoggingProfiler.reset!()
+	LoggingProfiler.clear!()
 	@record foo(1.0, 1.0)
 	@test  LoggingProfiler.to.i[] == 364
 
@@ -16,8 +16,8 @@ using Test
 	@test LoggingProfiler.iscallalist(calls, 3) == false
 
 
-	LoggingProfiler.reset!()
+	LoggingProfiler.clear!()
 	@record foo(1.0, 1.0)
-	root = LoggingProfiler.tape2structure(LoggingProfiler.to)
-	LoggingProfiler._visualize("/tmp/test.html", root)
+	events = LoggingProfiler.tape2structure()
+	LoggingProfiler._visualize("/tmp/test.html", events)
 end

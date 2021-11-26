@@ -56,10 +56,17 @@ function record_end(calls, ev::Symbol)
     calls.stamps[n] = t
 end
 
-reset!() = to.i[] = 0
+clear!() = to.i[] = 0
 
 function Base.resize!(calls::Events, n::Integer)
   resize!(calls.stamps, n)
   resize!(calls.event, n)
   resize!(calls.startstop, n)
+end
+
+resizebuffer!(n::Integer) = resize!(to, n)
+recorded() = to.i[]
+function adjustbuffer!()
+    resizebuffer!(2*recorded())
+    clear!()
 end
