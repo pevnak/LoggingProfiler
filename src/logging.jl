@@ -23,7 +23,15 @@ function Base.show(io::IO, calls::Events)
     end
 end
 
-global const to = [Events(1000) for i in 1:Threads.nthreads()]
+global const to = [Events(1000) for i in 1:1]
+
+function initbuffer!(n)
+    while length(to) < Threads.nthreads()
+        push!(to, Events(n))
+    end
+    clear!()
+    to
+end
 
 """
     record_start(ev::Symbol)
@@ -32,6 +40,10 @@ global const to = [Events(1000) for i in 1:Threads.nthreads()]
     appropriately increased
 """
 record_start(ev::Symbol) = record_start(to[Threads.threadid()], ev)
+# function record_start(ev::Symbol) 
+#     @show (Threads.threadid(), ev)
+#     record_start(to[Threads.threadid()], ev)
+# end
 function record_start(calls, ev::Symbol)
     n = calls.i[] = calls.i[] + 1
     n > length(calls.stamps) && return 
@@ -64,7 +76,7 @@ function Base.resize!(calls::Events, n::Integer)
   resize!(calls.startstop, n)
 end
 
-resizebuffer!(n::Integer) = foreach(t -> resize!(to, n), to)
+resizebuffer!(n::Integer) = foreach(t -> resize!(t, n), to)
 recorded() = maximum(t.i[] for t in to)
 function adjustbuffer!()
     resizebuffer!(2*recorded())

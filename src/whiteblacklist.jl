@@ -7,6 +7,11 @@ struct WhiteBlackLists
     blacklist_globalref::Indices{Core.GlobalRef}
 end
 
+function WhiteBlackLists() 
+    WhiteBlackLists(Indices{Module}(), Indices{Symbol}(), Indices{Core.GlobalRef}(), 
+        Indices{Module}(), Indices{Symbol}(), Indices{Core.GlobalRef}())
+end
+
 function iswhite(l::WhiteBlackLists, ex::GlobalRef)
     ex.mod ∈ l.whitelist_module && return(true)
     ex ∈ l.whitelist_globalref && return(true)
@@ -22,5 +27,13 @@ function isblack(l::WhiteBlackLists, ex::GlobalRef)
 end
 
 function Base.isempty(l::WhiteBlackLists)
-    l.isempty(whitelist_module) && l.isempty(whitelist_function) && l.isempty(whitelist_function)
+    isempty(l.whitelist_module) && isempty(l.whitelist_function) && isempty(l.whitelist_function)
 end
+
+
+whitelist!(l::WhiteBlackLists, ex::GlobalRef) = insert!(l.whitelist_globalref, ex)
+whitelist!(l::WhiteBlackLists, ex::Symbol) = insert!(l.whitelist_function, ex)
+whitelist!(l::WhiteBlackLists, ex::Module) = insert!(l.whitelist_module, ex)
+blacklist!(l::WhiteBlackLists, ex::GlobalRef) = insert!(l.blacklist_globalref, ex)
+blacklist!(l::WhiteBlackLists, ex::Symbol) = insert!(l.blacklist_function, ex)
+blacklist!(l::WhiteBlackLists, ex::Module) = insert!(l.blacklist_module, ex)

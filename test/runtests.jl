@@ -7,9 +7,19 @@ using Test
 	  z + sin(y)
 	end
 
+	@testset "whitelisting" begin
+		ci = @code_lowered foo(1.0, 1.0)
+		@test map(LoggingProfiler.timable, ci.code) == Bool[0, 0, 1, 1, 0]
+		whitelist!(LoggingProfiler.timable_list, :sin)
+		@test map(LoggingProfiler.timable, ci.code) == Bool[0, 0, 1, 0, 0]
+		whitelist!(LoggingProfiler.timable_list, Core.GlobalRef(Main, :+))
+		@test map(LoggingProfiler.timable, ci.code) == Bool[0, 0, 1, 1, 0]
+	end
+
 	LoggingProfiler.clear!()
 	@record foo(1.0, 1.0)
-	@test  LoggingProfiler.to.i[] == 364
+	calls = LoggingProfiler.to[1];
+	@test  calls.i[] == 364
 
 	@test LoggingProfiler.iscallalist(calls, 1) == false
 	@test LoggingProfiler.iscallalist(calls, 2) == true
@@ -19,5 +29,5 @@ using Test
 	LoggingProfiler.clear!()
 	@record foo(1.0, 1.0)
 	events = LoggingProfiler.tape2structure()
-	LoggingProfiler._visualize("/tmp/test.html", events)
+	LoggingProfiler._visualize("/tmp/test.html", events[1])
 end

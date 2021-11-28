@@ -45,6 +45,7 @@ function tape2structure(calls::Events)
         if iscallalist(calls, i)
             new_node, i = parselist(calls, i)
             push!(node[:children], new_node)
+            continue
         end
         if calls.startstop[i] == :start 
             push!(stack, node)
@@ -57,6 +58,7 @@ function tape2structure(calls::Events)
             push!(node[:children], new_node)
             node = new_node
             i += 1
+            continue
         end
 
         if calls.startstop[i] == :stop
@@ -65,6 +67,7 @@ function tape2structure(calls::Events)
             node[:stop] = calls.stamps[i]
             i += 1
             node = pop!(stack)
+            continue
         end
     end
     root[:children]
