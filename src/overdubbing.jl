@@ -1,14 +1,36 @@
 using IRTools
+using Dictionaries
 using IRTools: var, xcall, insert!, insertafter!, func, recurse!, @dynamo
+
 
 function timable(ex::Expr) 
     ex.head != :call && return(false)
-    length(ex.args) < 2 && return(false)
-    ex.args[1] isa Core.GlobalRef && return(true)
-    ex.args[1] isa Symbol && return(true)
-    return(false)
+    isempty(ex.args) && return(false)
+    timable(ex.args[1])
 end
 timable(ex) = false
+
+"""
+    timable(ex::GlobalRef)
+
+    decides if function will be timed or not. By default, all functions are timed. 
+    But if any function is white-listed by adding function / module  to whitelists,
+    the default becomes deny and only white-listed function function are allowed.
+
+    If something is added to blacklist, that the default accept is kept and only
+    blacklisted functions are not timed.
+"""
+function timable(ex::GlobalRef)
+    ex.mod ∈ whitelist_module && return(true)
+    ex ∈ whitelist_globalref && return(true)
+    ex.name ∈ whitelist_function && return(true)
+    ex.mod ∈ blacklist_module && return(false)
+    ex ∈ blacklist_globalref && return(false)
+    ex.name ∈ blacklist_function && return(false)
+    isempty(whitelist_module) && isempty(whitelist_function) && isempty(whitelist_function) && return(true)
+    return(false)
+end
+
 
 recursable(gr::GlobalRef) = gr.name ∉ [:profile_fun, :record_start, :record_end]
 recursable(ex::Expr) = ex.head == :call && recursable(ex.args[1])
