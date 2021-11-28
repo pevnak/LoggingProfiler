@@ -69,7 +69,7 @@ function tape2structure(calls::Events)
     end
     root[:children]
 end
-tape2structure() = tape2structure(to);
+tape2structure() = [tape2structure(t) for t in to];
 
 _visualize(filename;scaling = 1) = _visualize(filename, tape2structure(); scaling)
 function _visualize(filename::String, events; basetime= events[1][:start], scaling = 1)

@@ -23,7 +23,7 @@ function Base.show(io::IO, calls::Events)
     end
 end
 
-global const to = Events(1000)
+global const to = [Events(1000) for i in 1:Threads.nthreads()]
 
 """
     record_start(ev::Symbol)
@@ -31,7 +31,7 @@ global const to = Events(1000)
     record the start of the event, the time stamp is recorded after all counters are 
     appropriately increased
 """
-record_start(ev::Symbol) = record_start(to, ev)
+record_start(ev::Symbol) = record_start(to[Threads.threadid()], ev)
 function record_start(calls, ev::Symbol)
     n = calls.i[] = calls.i[] + 1
     n > length(calls.stamps) && return 
@@ -46,7 +46,7 @@ end
     record the end of the event, the time stamp is recorded before all counters are 
     appropriately increased
 """
-record_end(ev::Symbol) = record_end(to, ev::Symbol)
+record_end(ev::Symbol) = record_end(to[Threads.threadid()], ev::Symbol)
 function record_end(calls, ev::Symbol)
     t = time_ns()
     n = calls.i[] = calls.i[] + 1
@@ -56,7 +56,7 @@ function record_end(calls, ev::Symbol)
     calls.stamps[n] = t
 end
 
-clear!() = to.i[] = 0
+clear!() = foreach(t -> t.i[] = 0, to)
 
 function Base.resize!(calls::Events, n::Integer)
   resize!(calls.stamps, n)
@@ -64,8 +64,8 @@ function Base.resize!(calls::Events, n::Integer)
   resize!(calls.startstop, n)
 end
 
-resizebuffer!(n::Integer) = resize!(to, n)
-recorded() = to.i[]
+resizebuffer!(n::Integer) = foreach(t -> resize!(to, n), to)
+recorded() = maximum(t.i[] for t in to)
 function adjustbuffer!()
     resizebuffer!(2*recorded())
     clear!()
