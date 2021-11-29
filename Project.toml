@@ -13,6 +13,7 @@ Luxor = "ae8d54c2-7ccd-5906-9d76-62fc9837b5bc"
 [compat]
 Colors = "0.12"
 DataStructures = "0.18"
+Dictionaries = "0.3"
 IRTools = "0.4"
 julia = "1"
 
