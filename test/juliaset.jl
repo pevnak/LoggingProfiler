@@ -46,7 +46,7 @@ end
 blacklist!(LoggingProfiler.timable_list, Core)
 blacklist!(LoggingProfiler.timable_list, Base)
 whitelist!(LoggingProfiler.recursable_list, :juliaset_column!)
-whitelist!(LoggingProfiler.recursable_list, :juliaset_single!!)
+whitelist!(LoggingProfiler.recursable_list, :juliaset_single!)
 LoggingProfiler.initbuffer!(1000)
 juliaset(-0.79, 0.15, 10, juliaset_static!)
 LoggingProfiler.recorded()
