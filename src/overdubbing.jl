@@ -91,6 +91,18 @@ macro record(ex)
     esc(Expr(:call, :(LoggingProfiler.profile_fun), ex.args...))
 end
 
+macro recordfun(ex::Expr)
+    @assert ex.head == :call 
+    fname = ex.args[1]
+    x = gensym(:result)
+    rex = quote
+        LoggingProfiler.record_start($(QuoteNode(fname)))
+        $(x) = $(ex)
+        LoggingProfiler.record_end($(QuoteNode(fname)))
+        $(x)
+    end
+    esc(rex)
+end
 # macro record(ex)
 #     ex.head != :call && error("we can profiler only function calls")
 #     s = fname(ex)

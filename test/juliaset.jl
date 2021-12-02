@@ -26,7 +26,7 @@ end
 
 function juliaset_static!(img, c, n)
     Threads.@threads for j in 1:n
-        @record juliaset_column!(img, c, n, j)
+        juliaset_column!(img, c, n, j)
     end
     nothing
 end
@@ -43,14 +43,17 @@ end
 # LoggingProfiler.recorded()
 # 144
 
-blacklist!(LoggingProfiler.timable_list, Core)
-blacklist!(LoggingProfiler.timable_list, Base)
-whitelist!(LoggingProfiler.recursable_list, :juliaset_column!)
-whitelist!(LoggingProfiler.recursable_list, :juliaset_single!)
+# blacklist!(LoggingProfiler.timable_list, Core)
+# blacklist!(LoggingProfiler.timable_list, Base)
+# whitelist!(LoggingProfiler.recursable_list, :juliaset_column!)
+# whitelist!(LoggingProfiler.recursable_list, :juliaset_single!)
+# whitelist!(LoggingProfiler.timable_list, :juliaset_column!)
+# whitelist!(LoggingProfiler.timable_list, :juliaset_single!)
+# whitelist!(LoggingProfiler.timable_list, :juliaset_pixel!)
 LoggingProfiler.initbuffer!(1000)
-juliaset(-0.79, 0.15, 10, juliaset_static!)
+@record juliaset(-0.79, 0.15, 10, juliaset_static!)
 LoggingProfiler.recorded()
 LoggingProfiler.adjustbuffer!()
-juliaset(-0.79, 0.15, 10, juliaset_static!)
+@record juliaset(-0.79, 0.15, 10, juliaset_static!)
 # 53828
-LoggingProfiler.export2luxor("/tmp/profile.png")
+LoggingProfiler.export2svg("/tmp/profile.svg")

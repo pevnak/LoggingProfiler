@@ -6,5 +6,5 @@ include("overdubbing.jl")
 include("visualization.jl")
 include("luxor.jl")
 
-export @record, whitelist!, blacklist!
+export @record, @recordfun whitelist!, blacklist!
 end
