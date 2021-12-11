@@ -3,8 +3,8 @@ using IRTools, DataStructures, Colors, Dictionaries
 include("logging.jl")
 include("whiteblacklist.jl")
 include("overdubbing.jl")
-include("visualization.jl")
+include("tape2structure.jl")
 include("luxor.jl")
 
-export @record, @recordfun whitelist!, blacklist!
+export @record, @rrecord, @recordfun whitelist!, blacklist!
 end

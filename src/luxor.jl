@@ -52,7 +52,7 @@ function drawevent_svg(io::IO, ev::Dict, y, offset, δ, colormap, ystep, cols)
     x = δ*(ev[:start] - offset)
     w =  δ*(ev[:stop]  - ev[:start])    
     shortinfo = "$(ev[:name])"
-    dirinfo = "$(ev[:name])"
+    dirinfo = "$(ev[:start]) - $(ev[:stop]) ($(w))"
     roundradius = 2
     write_svgflamerect(io, x, y, w, ystep, roundradius, shortinfo, dirinfo, color, true)
     haskey(ev, :children) && drawevent_svg(io, ev[:children], y + ystep, offset, δ, colormap, ystep, cols)

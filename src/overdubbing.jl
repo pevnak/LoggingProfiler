@@ -91,6 +91,20 @@ macro record(ex)
     esc(Expr(:call, :(LoggingProfiler.profile_fun), ex.args...))
 end
 
+macro rrecord(ex) 
+    @assert ex.head == :call 
+    fname = ex.args[1]
+    x = gensym(:result)
+    lex = Expr(:call, :(LoggingProfiler.profile_fun), ex.args...)
+    rex = quote
+        LoggingProfiler.record_start($(QuoteNode(fname)))
+        $(x) = $(lex)
+        LoggingProfiler.record_end($(QuoteNode(fname)))
+        $(x)
+    end
+    esc(rex)
+end
+
 macro recordfun(ex::Expr)
     @assert ex.head == :call 
     fname = ex.args[1]
