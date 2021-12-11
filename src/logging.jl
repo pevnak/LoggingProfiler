@@ -24,7 +24,7 @@ function Base.show(io::IO, calls::Events)
         offset -= calls.startstop[i] == :stop
         foreach(_ -> print(io, " "), 1:max(offset, 0))
         rel_time = calls.stamps[i] - calls.stamps[1]
-        println(io, calls.event[i], ": ", rel_time)
+        println(io, calls.taskid[i], "  ",calls.event[i], ": ", rel_time)
         offset += calls.startstop[i] == :start
     end
 end
@@ -36,7 +36,7 @@ function initbuffer!(n)
         push!(to, Events(n))
     end
     clear!()
-    to
+    nothing
 end
 
 """
