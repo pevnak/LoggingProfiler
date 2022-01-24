@@ -15,6 +15,7 @@ ProfileSVG = "132c30aa-f267-4189-9183-c8a63c7e05e6"
 Colors = "0.12"
 DataStructures = "0.18"
 IRTools = "0.4"
+Luxor = "3"
 julia = "1"
 
 [extras]
